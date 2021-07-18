@@ -1,4 +1,7 @@
 import '../sass/main.scss';
+//import Swal from 'sweetalert2/dist/sweetalert2.js'
+//import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
 
 const date = new Date();
 console.log(date);
