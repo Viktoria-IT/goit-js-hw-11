@@ -1,12 +1,59 @@
-import '../sass/main.scss';
-//import Swal from 'sweetalert2/dist/sweetalert2.js'
-//import Swal from 'sweetalert2';
-import 'sweetalert2/src/sweetalert2.scss';
+import Swal from 'sweetalert2'
 
-const date = new Date();
-console.log(date);
-const btnStart = document.querySelector('[data-start]');
-console.log(btnStart);
+const date = document.querySelector("#date-selector")
+date.addEventListener("input", onInput)
+
+const startBtn = document.querySelector("[data-start]")
+startBtn.addEventListener("click", onClick)
+startBtn.setAttribute("disabled", true)
+
+const daysEl = document.querySelector("[data-days]")
+const hoursEl = document.querySelector("[data-hours]")
+const minutesEl = document.querySelector("[data-minutes]")
+const secondsEl = document.querySelector("[data-seconds]")
+
+let currentDate = 0
+let settledDate = 0
+let delta = 0
+    
+function onClick() {
+    currentDate = Date.now()
+    delta = settledDate - currentDate
+    
+    if (delta > 0) {
+        const intervalId = setInterval(() => {
+            currentDate = Date.now()
+            delta = settledDate - currentDate
+            let { days, hours, minutes, seconds } = convertMs(delta)
+            // console.log("Settled interval : ", convertMs(delta))
+
+            if (delta >= 0) {
+                secondsEl.textContent = seconds < 10 ? '0' + seconds : seconds
+                minutesEl.textContent = minutes < 10 ? '0' + minutes : minutes
+                hoursEl.textContent = hours < 10 ? '0' + hours : hours
+                daysEl.textContent = days < 10 ? '0' + days : days
+            } else {
+                clearInterval(intervalId)
+                // console.log("Cleared interval : ", convertMs(delta))
+            }
+            
+        }, 1000)
+    } else {
+        Swal.fire('Please choose a date in the future')    
+    }
+}
+
+function onInput(event) {
+    currentDate = Date.now()
+    settledDate = Date.parse(event.target.value)
+    delta = settledDate - currentDate
+ 
+    if (delta > 0) {
+        startBtn.removeAttribute("disabled")
+    } else {
+        startBtn.setAttribute("disabled", true)
+    }
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -26,8 +73,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-
-const dataStart = () => { };
-
-btnStart.addEventListener('click', dataStart);
